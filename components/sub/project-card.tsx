@@ -10,9 +10,9 @@ import {
   RocketLaunchIcon,
   SparklesIcon,
 } from "@heroicons/react/24/outline";
+import { useEffect, useState } from "react";
 
 import Image from "next/image";
-import { useState } from "react";
 
 type ProjectCardProps = {
   src: string;
@@ -52,6 +52,11 @@ export const ProjectCard = ({
 }: ProjectCardProps) => {
   const [isHovered, setIsHovered] = useState(false);
   const [imageLoaded, setImageLoaded] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    setIsMobile(window.innerWidth < 768);
+  }, []);
 
   const statusColors = {
     live: "bg-emerald-500/20 text-emerald-300 border-emerald-500/40",
@@ -90,11 +95,11 @@ export const ProjectCard = ({
 
   return (
     <motion.div
-      whileHover={{ rotateX: 4, rotateY: -4, scale: 1.03 }}
+      whileHover={!isMobile ? { rotateX: 4, rotateY: -4, scale: 1.03 } : {}}
       whileTap={{ scale: 0.98 }}
       transition={{ type: "spring", stiffness: 300, damping: 20 }}
       className="group relative w-full"
-      onHoverStart={() => setIsHovered(true)}
+      onHoverStart={() => !isMobile && setIsHovered(true)}
       onHoverEnd={() => setIsHovered(false)}
     >
       {/* Featured Badge */}
@@ -103,31 +108,23 @@ export const ProjectCard = ({
           initial={{ scale: 0, rotate: -180 }}
           animate={{ scale: 1, rotate: 0 }}
           transition={{ type: "spring", delay: 0.2 }}
-          className="absolute -top-3 -right-3 z-20"
+          className="absolute -top-2 -right-2 z-20"
         >
           <div className="relative">
-            <SparklesIcon className="w-6 h-6 text-yellow-400 drop-shadow-lg" />
-            <motion.div
-              animate={{ rotate: 360 }}
-              transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
-              className="absolute inset-0"
-            >
-              <SparklesIcon className="w-6 h-6 text-yellow-200 opacity-70" />
-            </motion.div>
+            <SparklesIcon className="w-5 h-5 md:w-6 md:h-6 text-yellow-400 drop-shadow-lg" />
           </div>
         </motion.div>
       )}
 
       {/* Card */}
-      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-slate-900/95 to-slate-800/60 backdrop-blur-2xl border border-slate-700/60 hover:border-cyan-400/70 transition-all duration-700 shadow-2xl hover:shadow-cyan-500/30 h-full flex flex-col">
-
+      <div className="relative overflow-hidden rounded-2xl md:rounded-3xl bg-gradient-to-br from-slate-900/95 to-slate-800/60 backdrop-blur-2xl border border-slate-700/60 hover:border-cyan-400/70 transition-all duration-700 shadow-2xl hover:shadow-cyan-500/30 h-full flex flex-col">
         {/* Gradient Pattern */}
         <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700">
           <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-cyan-500/5 via-transparent to-purple-500/5" />
         </div>
 
         {/* Image Section */}
-        <div className="relative h-52 overflow-hidden">
+        <div className="relative h-48 sm:h-52 md:h-52 overflow-hidden">
           {!imageLoaded && (
             <div className="absolute inset-0 bg-gradient-to-r from-slate-700 via-slate-600 to-slate-700 animate-pulse" />
           )}
@@ -184,9 +181,9 @@ export const ProjectCard = ({
           />
 
           {/* Badges */}
-          <div className="absolute top-4 left-4 flex gap-2 z-10">
+          <div className="absolute top-3 left-3 md:top-4 md:left-4 flex gap-2 z-10 flex-wrap">
             <span
-              className={`px-3 py-1.5 rounded-full text-xs font-semibold border backdrop-blur-xl flex items-center gap-1 ${statusColors[status]}`}
+              className={`px-2.5 py-1 md:px-3 md:py-1.5 rounded-full text-xs font-semibold border backdrop-blur-xl flex items-center gap-1 ${statusColors[status]}`}
             >
               <span>{statusIcons[status]}</span>
               {status === "live"
@@ -195,54 +192,54 @@ export const ProjectCard = ({
                 ? "In Progress"
                 : "Archived"}
             </span>
-            <span className="px-3 py-1.5 bg-gradient-to-r from-cyan-500/20 to-purple-500/20 text-cyan-300 rounded-full text-xs font-semibold border border-cyan-500/30 backdrop-blur-xl">
+            <span className="px-2.5 py-1 md:px-3 md:py-1.5 bg-gradient-to-r from-cyan-500/20 to-purple-500/20 text-cyan-300 rounded-full text-xs font-semibold border border-cyan-500/30 backdrop-blur-xl">
               {category}
             </span>
           </div>
         </div>
 
         {/* Content */}
-        <div className="relative p-7 flex-1 flex flex-col">
-          <h1 className="text-2xl font-bold bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-500 bg-clip-text text-transparent drop-shadow-[0_0_6px_rgba(34,211,238,0.25)] mb-3 line-clamp-1">
+        <div className="relative p-5 sm:p-6 md:p-7 flex-1 flex flex-col">
+          <h1 className="text-xl sm:text-2xl md:text-2xl font-bold bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-500 bg-clip-text text-transparent drop-shadow-[0_0_6px_rgba(34,211,238,0.25)] mb-3 line-clamp-1">
             {title}
           </h1>
 
-          <p className="text-slate-300 text-sm leading-relaxed opacity-90 hover:opacity-100 transition-opacity duration-500 mb-5 line-clamp-3">
+          <p className="text-slate-300 text-xs sm:text-sm md:text-sm leading-relaxed opacity-90 hover:opacity-100 transition-opacity duration-500 mb-4 md:mb-5 line-clamp-3">
             {description}
           </p>
 
           {/* Meta Info */}
-          <div className="flex items-center justify-between text-xs text-slate-400 mb-5">
-            <div className="flex items-center gap-3">
+          <div className="flex items-center justify-between text-xs text-slate-400 mb-4 md:mb-5">
+            <div className="flex items-center gap-2 md:gap-3">
               <div className="flex items-center gap-1.5">
-                <ClockIcon className="w-3.5 h-3.5" />
-                <span className="font-medium">{duration}</span>
+                <ClockIcon className="w-3 h-3 md:w-3.5 md:h-3.5" />
+                <span className="font-medium text-xs">{duration}</span>
               </div>
               <div className="flex items-center gap-1.5">
-                <BuildingLibraryIcon className="w-3.5 h-3.5" />
-                <span className="font-medium">{category}</span>
+                <BuildingLibraryIcon className="w-3 h-3 md:w-3.5 md:h-3.5" />
+                <span className="font-medium text-xs hidden sm:inline">{category}</span>
               </div>
             </div>
             <div className="flex items-center gap-1 text-cyan-400">
-              <EyeIcon className="w-3.5 h-3.5" />
-              <span className="font-semibold">Explore</span>
+              <EyeIcon className="w-3 h-3 md:w-3.5 md:h-3.5" />
+              <span className="font-semibold text-xs">Explore</span>
             </div>
           </div>
 
           {/* Tech Stack */}
-          <div className="mb-6">
-            <h4 className="text-xs font-semibold text-slate-400 mb-3 uppercase tracking-wider">
+          <div className="mb-5 md:mb-6">
+            <h4 className="text-xs font-semibold text-slate-400 mb-2 md:mb-3 uppercase tracking-wider">
               Tech Stack
             </h4>
-            <div className="flex flex-wrap gap-2">
-              {technologies.map((tech, index) => (
+            <div className="flex flex-wrap gap-1.5 md:gap-2">
+              {technologies.slice(0, isMobile ? 6 : technologies.length).map((tech, index) => (
                 <motion.span
                   key={tech}
                   initial={{ opacity: 0, scale: 0.8, y: 10 }}
                   animate={{ opacity: 1, scale: 1, y: 0 }}
                   transition={{ delay: index * 0.08, type: "spring" }}
-                  whileHover={{ scale: 1.1 }}
-                  className={`px-3 py-1.5 text-xs font-medium rounded-xl border transition-all duration-300 ${
+                  whileHover={!isMobile ? { scale: 1.1 } : {}}
+                  className={`px-2 py-1 md:px-3 md:py-1.5 text-xs font-medium rounded-xl border transition-all duration-300 ${
                     techStyles[tech] ||
                     "text-cyan-300 border-slate-600/50 bg-slate-800/60"
                   }`}
@@ -250,19 +247,24 @@ export const ProjectCard = ({
                   {tech}
                 </motion.span>
               ))}
+              {isMobile && technologies.length > 6 && (
+                <span className="px-2 py-1 text-xs text-slate-400 font-medium">
+                  +{technologies.length - 6} more
+                </span>
+              )}
             </div>
           </div>
 
           {/* Action Buttons */}
-          <div className="flex gap-3 pt-5 border-t border-slate-700/50">
+          <div className="flex flex-col sm:flex-row gap-3 pt-4 md:pt-5 border-t border-slate-700/50">
             {link && (
               <motion.a
                 href={link}
                 target="_blank"
                 rel="noopener noreferrer"
-                whileHover={{ scale: 1.05, y: -2 }}
+                whileHover={!isMobile ? { scale: 1.05, y: -2 } : {}}
                 whileTap={{ scale: 0.95 }}
-                className="flex-1 flex items-center justify-center gap-2 px-5 py-3.5 bg-gradient-to-r from-cyan-600 to-cyan-700 text-white text-sm font-bold rounded-xl hover:from-cyan-500 hover:to-cyan-600 transition-all duration-300 shadow-lg hover:shadow-cyan-500/30 relative overflow-hidden group/btn"
+                className="flex-1 flex items-center justify-center gap-2 px-4 py-3 md:px-5 md:py-3.5 bg-gradient-to-r from-cyan-600 to-cyan-700 text-white text-sm font-bold rounded-xl hover:from-cyan-500 hover:to-cyan-600 transition-all duration-300 shadow-lg hover:shadow-cyan-500/30 relative overflow-hidden group/btn"
               >
                 <div className="absolute inset-0 bg-gradient-to-r from-cyan-400/30 via-purple-400/30 to-cyan-400/30 opacity-0 group-hover/btn:opacity-100 blur-md transition-opacity duration-500" />
                 <EyeIcon className="w-4 h-4 relative z-10" />
@@ -275,13 +277,13 @@ export const ProjectCard = ({
                 href={github}
                 target="_blank"
                 rel="noopener noreferrer"
-                whileHover={{ scale: 1.05, y: -2 }}
+                whileHover={!isMobile ? { scale: 1.05, y: -2 } : {}}
                 whileTap={{ scale: 0.95 }}
-                className="flex-1 flex items-center justify-center gap-2 px-5 py-3.5 bg-slate-800/80 text-slate-300 text-sm font-bold rounded-xl hover:bg-slate-700 hover:text-white border border-slate-600/50 hover:border-slate-500 transition-all duration-300 backdrop-blur-sm shadow-lg relative overflow-hidden group/btn"
+                className="flex-1 flex items-center justify-center gap-2 px-4 py-3 md:px-5 md:py-3.5 bg-slate-800/80 text-slate-300 text-sm font-bold rounded-xl hover:bg-slate-700 hover:text-white border border-slate-600/50 hover:border-slate-500 transition-all duration-300 backdrop-blur-sm shadow-lg relative overflow-hidden group/btn"
               >
                 <div className="absolute inset-0 bg-gradient-to-r from-slate-600/40 to-slate-700/40 opacity-0 group-hover/btn:opacity-100 blur-md transition-opacity duration-500" />
                 <CodeBracketIcon className="w-4 h-4 relative z-10" />
-                <span className="relative z-10">Source Code</span>
+                <span className="relative z-10">Code</span>
                 <ExternalLinkIcon className="w-3.5 h-3.5 relative z-10 transition-transform duration-300 group-hover/btn:translate-x-1" />
               </motion.a>
             )}

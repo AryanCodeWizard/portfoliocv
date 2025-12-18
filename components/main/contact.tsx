@@ -10,10 +10,10 @@ import {
   PhoneIcon,
   UserCircleIcon,
 } from "@heroicons/react/24/outline";
+import { useEffect, useState } from "react";
 
 import { motion } from "framer-motion";
 import { useInView } from "react-intersection-observer";
-import { useState } from "react";
 
 export const Contact = () => {
   const [ref, inView] = useInView({
@@ -21,6 +21,7 @@ export const Contact = () => {
     threshold: 0.1,
   });
 
+  const [isMobile, setIsMobile] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -30,6 +31,11 @@ export const Contact = () => {
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSent, setIsSent] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+
+  useEffect(() => {
+    setIsMobile(window.innerWidth < 768);
+  }, []);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
@@ -43,19 +49,28 @@ export const Contact = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
-    await new Promise((resolve) => setTimeout(resolve, 2000));
-    console.log("Form submitted:", formData);
-    setIsSubmitting(false);
-    setIsSent(true);
+    setErrorMessage("");
 
-    setFormData({
-      name: "",
-      email: "",
-      subject: "",
-      message: "",
-    });
+    try {
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+      });
 
-    setTimeout(() => setIsSent(false), 4000);
+      if (response.ok) {
+        setIsSent(true);
+        setFormData({ name: "", email: "", subject: "", message: "" });
+        setTimeout(() => setIsSent(false), 4000);
+      } else {
+        const data = await response.json();
+        setErrorMessage(data.error || 'Failed to send message');
+      }
+    } catch (error) {
+      setErrorMessage('Network error. Please check your connection.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const containerVariants = {
@@ -85,7 +100,7 @@ export const Contact = () => {
   return (
     <section
       id="contact"
-      className="relative flex flex-col items-center justify-center min-h-screen py-24 px-6 overflow-hidden"
+      className="relative flex flex-col items-center justify-center min-h-screen py-16 sm:py-20 md:py-24 px-4 sm:px-6 overflow-hidden"
     >
       {/* Animated Gradient Background */}
       {/* <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-slate-950 to-slate-900">
@@ -101,56 +116,56 @@ export const Contact = () => {
         className="relative z-10 w-full max-w-7xl mx-auto"
       >
         {/* Header Section */}
-        <motion.div variants={itemVariants} className="text-center mb-20">
-          <div className="inline-flex items-center gap-3 py-4 px-8 bg-slate-900/70 backdrop-blur-md rounded-2xl border border-cyan-500/20 shadow-2xl mb-6">
+        <motion.div variants={itemVariants} className="text-center mb-12 sm:mb-16 md:mb-20">
+          <div className="inline-flex items-center gap-2 sm:gap-3 py-3 px-6 sm:py-4 sm:px-8 bg-slate-900/70 backdrop-blur-md rounded-2xl border border-cyan-500/20 shadow-2xl mb-4 sm:mb-6">
             <motion.div
               animate={{ rotate: [0, 10, -10, 0] }}
               transition={{ duration: 2, repeat: Infinity, repeatDelay: 5 }}
             >
-              <PaperAirplaneIcon className="w-6 h-6 text-cyan-400" />
+              <PaperAirplaneIcon className="w-5 h-5 sm:w-6 sm:h-6 text-cyan-400" />
             </motion.div>
-            <span className="text-white font-semibold text-lg bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent">
+            <span className="text-white font-semibold text-sm sm:text-base md:text-lg bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent">
               Let&apos;s Build Something Great
             </span>
             <motion.div
               animate={{ rotate: [0, -10, 10, 0] }}
               transition={{ duration: 2, repeat: Infinity, repeatDelay: 5, delay: 1 }}
             >
-              <ChatBubbleLeftRightIcon className="w-6 h-6 text-purple-400" />
+              <ChatBubbleLeftRightIcon className="w-5 h-5 sm:w-6 sm:h-6 text-purple-400" />
             </motion.div>
           </div>
 
-          <h2 className="text-5xl md:text-7xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-purple-400 to-cyan-400 mb-4">
+          <h2 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-purple-400 to-cyan-400 mb-3 sm:mb-4 px-4">
             Get in Touch
           </h2>
 
-          <p className="text-lg text-gray-300 max-w-3xl mx-auto leading-relaxed">
-            I’m always excited to collaborate on innovative projects or discuss new ideas.  
-            Let’s turn your vision into reality with creative, scalable, and robust solutions.
+          <p className="text-sm sm:text-base md:text-lg text-gray-300 max-w-3xl mx-auto leading-relaxed px-4">
+            I'm always excited to collaborate on innovative projects or discuss new ideas.  
+            Let's turn your vision into reality.
           </p>
         </motion.div>
 
-        <div className="grid grid-cols-1 xl:grid-cols-3 gap-10">
+        <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 sm:gap-8 md:gap-10">
           {/* Contact Information */}
-          <motion.div variants={itemVariants} className="xl:col-span-1 space-y-8">
+          <motion.div variants={itemVariants} className="xl:col-span-1 space-y-6 sm:space-y-8">
             <motion.div
-              whileHover={{ y: -5 }}
-              className="bg-slate-900/80 backdrop-blur-lg rounded-3xl border border-slate-700/40 p-8 text-center shadow-lg shadow-cyan-900/10"
+              whileHover={!isMobile ? { y: -5 } : {}}
+              className="bg-slate-900/80 backdrop-blur-lg rounded-2xl sm:rounded-3xl border border-slate-700/40 p-6 sm:p-8 text-center shadow-lg shadow-cyan-900/10"
             >
               <motion.div
-                whileHover={{ scale: 1.05 }}
-                className="w-24 h-24 mx-auto mb-6 bg-gradient-to-r from-cyan-500 to-purple-500 rounded-2xl flex items-center justify-center"
+                whileHover={!isMobile ? { scale: 1.05 } : {}}
+                className="w-20 h-20 sm:w-24 sm:h-24 mx-auto mb-4 sm:mb-6 bg-gradient-to-r from-cyan-500 to-purple-500 rounded-2xl flex items-center justify-center"
               >
-                <UserCircleIcon className="w-12 h-12 text-white" />
+                <UserCircleIcon className="w-10 h-10 sm:w-12 sm:h-12 text-white" />
               </motion.div>
-              <h3 className="text-2xl font-bold text-white mb-2">Aryan</h3>
-              <p className="text-cyan-400 font-semibold mb-3">Fullstack Developer</p>
-              <p className="text-gray-400 text-sm">
-                Turning ideas into impactful digital experiences with precision and creativity.
+              <h3 className="text-xl sm:text-2xl font-bold text-white mb-2">Aryan</h3>
+              <p className="text-cyan-400 font-semibold mb-2 sm:mb-3 text-sm sm:text-base">Fullstack Developer</p>
+              <p className="text-gray-400 text-xs sm:text-sm px-2">
+                Turning ideas into impactful digital experiences
               </p>
             </motion.div>
 
-            <div className="space-y-4">
+            <div className="space-y-3 sm:space-y-4">
               {[
                 {
                   icon: EnvelopeIcon,
@@ -158,7 +173,7 @@ export const Contact = () => {
                   value: "contact.aryan0101@gmail.com",
                   subtitle: "Fastest response",
                   color: "cyan",
-                  href: "mailto:hello@aryan.dev",
+                  href: "mailto:contact.aryan0101@gmail.com",
                 },
                 {
                   icon: PhoneIcon,
@@ -170,43 +185,42 @@ export const Contact = () => {
                 {
                   icon: MapPinIcon,
                   title: "Location",
-                  value: "Darbhanga, Bihar, India",
+                  value: "Darbhanga, Bihar",
                   subtitle: "Available worldwide",
                   color: "cyan",
-                  href: "#",
                 },
                 {
                   icon: ClockIcon,
-                  title: "Response Time",
+                  title: "Response",
                   value: `< 24 Hours`,
                   subtitle: "Usually within 3 hours",
                   color: "purple",
-                  href: "#",
                 },
               ].map((contact) => (
                 <motion.a
                   key={contact.title}
                   href={contact.href}
-                  whileHover={{
+                  whileHover={!isMobile ? {
                     x: 6,
                     backgroundColor:
                       contact.color === "cyan"
                         ? "rgba(6, 182, 212, 0.08)"
                         : "rgba(147, 51, 234, 0.08)",
-                  }}
-                  className="flex items-center gap-4 p-4 bg-slate-900/60 rounded-2xl border border-slate-700/40 hover:border-cyan-400/30 transition-all duration-300 group cursor-pointer"
+                  } : {}}
+                  whileTap={{ scale: 0.98 }}
+                  className="flex items-center gap-3 sm:gap-4 p-3 sm:p-4 bg-slate-900/60 rounded-xl sm:rounded-2xl border border-slate-700/40 hover:border-cyan-400/30 transition-all duration-300 group cursor-pointer"
                 >
                   <div
-                    className={`p-3 rounded-xl bg-${contact.color}-500/10 group-hover:scale-110 transition-transform duration-300`}
+                    className={`p-2 sm:p-3 rounded-lg sm:rounded-xl bg-${contact.color}-500/10 group-hover:scale-110 transition-transform duration-300`}
                   >
-                    <contact.icon className={`w-6 h-6 text-${contact.color}-400`} />
+                    <contact.icon className={`w-5 h-5 sm:w-6 sm:h-6 text-${contact.color}-400`} />
                   </div>
-                  <div className="flex-1">
-                    <h4 className="text-white font-semibold">{contact.title}</h4>
-                    <p className="text-gray-300">{contact.value}</p>
-                    <p className="text-gray-400 text-sm">{contact.subtitle}</p>
+                  <div className="flex-1 min-w-0">
+                    <h4 className="text-white font-semibold text-sm sm:text-base truncate">{contact.title}</h4>
+                    <p className="text-gray-300 text-xs sm:text-sm truncate">{contact.value}</p>
+                    <p className="text-gray-400 text-xs hidden sm:block">{contact.subtitle}</p>
                   </div>
-                  <LinkIcon className="w-4 h-4 text-gray-400 group-hover:text-cyan-400 transition-colors" />
+                  <LinkIcon className="w-3 h-3 sm:w-4 sm:h-4 text-gray-400 group-hover:text-cyan-400 transition-colors flex-shrink-0" />
                 </motion.a>
               ))}
             </div>
@@ -214,22 +228,22 @@ export const Contact = () => {
             {/* Social Links */}
             <motion.div
               variants={itemVariants}
-              className="bg-slate-900/70 rounded-2xl border border-slate-700/40 p-6"
+              className="bg-slate-900/70 rounded-xl sm:rounded-2xl border border-slate-700/40 p-5 sm:p-6"
             >
-              <h4 className="text-white font-semibold mb-4 text-center">
+              <h4 className="text-white font-semibold mb-3 sm:mb-4 text-center text-sm sm:text-base">
                 Connect With Me
               </h4>
-              <div className="grid grid-cols-4 gap-3">
+              <div className="grid grid-cols-4 gap-2 sm:gap-3">
                 {socialLinks.map((social) => (
                   <motion.a
                     key={social.name}
                     href={social.url}
-                    whileHover={{ scale: 1.1, y: -2 }}
+                    whileHover={!isMobile ? { scale: 1.1, y: -2 } : {}}
                     whileTap={{ scale: 0.9 }}
-                    className={`p-3 bg-slate-800/50 rounded-xl border border-slate-700/30 text-center text-gray-400 ${social.color} transition-all duration-300 group`}
+                    className={`p-3 bg-slate-800/50 rounded-lg sm:rounded-xl border border-slate-700/30 text-center text-gray-400 ${social.color} transition-all duration-300 group`}
                   >
-                    <div className="text-lg mb-1">{social.icon}</div>
-                    <div className="text-xs font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                    <div className="text-base sm:text-lg mb-1">{social.icon}</div>
+                    <div className="text-xs font-medium hidden sm:block opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                       {social.name}
                     </div>
                   </motion.a>
@@ -240,21 +254,21 @@ export const Contact = () => {
 
           {/* Contact Form */}
           <motion.div variants={itemVariants} className="xl:col-span-2">
-            <div className="bg-slate-900/80 backdrop-blur-md rounded-3xl border border-slate-700/50 p-8 h-full shadow-lg shadow-purple-900/10">
-              <div className="flex items-center gap-3 mb-8">
+            <div className="bg-slate-900/80 backdrop-blur-md rounded-2xl sm:rounded-3xl border border-slate-700/50 p-6 sm:p-8 h-full shadow-lg shadow-purple-900/10">
+              <div className="flex items-center gap-2 sm:gap-3 mb-6 sm:mb-8">
                 <div className="p-2 bg-cyan-500/10 rounded-lg">
-                  <EnvelopeIcon className="w-6 h-6 text-cyan-400" />
+                  <EnvelopeIcon className="w-5 h-5 sm:w-6 sm:h-6 text-cyan-400" />
                 </div>
                 <div>
-                  <h3 className="text-2xl font-bold text-white">Send Message</h3>
-                  <p className="text-gray-400">
-                    Get in touch for collaborations or project inquiries
+                  <h3 className="text-xl sm:text-2xl font-bold text-white">Send Message</h3>
+                  <p className="text-gray-400 text-xs sm:text-sm">
+                    Get in touch for collaborations
                   </p>
                 </div>
               </div>
 
-              <form onSubmit={handleSubmit} className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <form onSubmit={handleSubmit} className="space-y-5 sm:space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-6">
                   <InputField
                     id="name"
                     name="name"
@@ -264,6 +278,7 @@ export const Contact = () => {
                     value={formData.name}
                     onChange={handleChange}
                     required
+                    isMobile={isMobile}
                   />
                   <InputField
                     id="email"
@@ -274,6 +289,7 @@ export const Contact = () => {
                     value={formData.email}
                     onChange={handleChange}
                     required
+                    isMobile={isMobile}
                   />
                 </div>
 
@@ -284,24 +300,36 @@ export const Contact = () => {
                   value={formData.subject}
                   onChange={handleChange}
                   required
+                  isMobile={isMobile}
                 />
 
                 <TextAreaField
                   id="message"
                   name="message"
                   label="Project Details"
-                  placeholder="Describe your project goals, timeline, and budget..."
+                  placeholder="Describe your project goals..."
                   value={formData.message}
                   onChange={handleChange}
                   required
+                  isMobile={isMobile}
                 />
+
+                {errorMessage && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="p-4 bg-red-500/10 border border-red-500/30 rounded-xl text-red-400 text-sm"
+                  >
+                    {errorMessage}
+                  </motion.div>
+                )}
 
                 <motion.button
                   type="submit"
                   disabled={isSubmitting}
-                  whileHover={{ scale: isSubmitting ? 1 : 1.03 }}
+                  whileHover={!isMobile && !isSubmitting ? { scale: 1.03 } : {}}
                   whileTap={{ scale: 0.97 }}
-                  className={`w-full py-4 bg-gradient-to-r from-cyan-600 to-purple-600 text-white font-bold rounded-xl shadow-lg flex items-center justify-center gap-3 transition-all duration-300 ${
+                  className={`w-full py-3 sm:py-4 bg-gradient-to-r from-cyan-600 to-purple-600 text-white font-bold rounded-xl shadow-lg flex items-center justify-center gap-2 sm:gap-3 transition-all duration-300 text-sm sm:text-base ${
                     isSubmitting ? "opacity-70 cursor-not-allowed" : ""
                   }`}
                 >
@@ -318,7 +346,7 @@ export const Contact = () => {
                     "✅ Message Sent!"
                   ) : (
                     <>
-                      <PaperAirplaneIcon className="w-5 h-5" />
+                      <PaperAirplaneIcon className="w-4 h-4 sm:w-5 sm:h-5" />
                       Send Message
                     </>
                   )}
@@ -331,24 +359,24 @@ export const Contact = () => {
         {/* Stats Section */}
         <motion.div
           variants={itemVariants}
-          className="grid grid-cols-2 lg:grid-cols-4 gap-6 mt-20 pt-16 border-t border-slate-700/30"
+          className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mt-12 sm:mt-16 md:mt-20 pt-12 sm:pt-16 border-t border-slate-700/30"
         >
           {[
             { number: "24h", label: "Avg. Response", icon: "⚡", color: "text-cyan-400" },
             { number: "50+", label: "Projects Done", icon: "🚀", color: "text-purple-400" },
-            { number: "100%", label: "Client Satisfaction", icon: "⭐", color: "text-cyan-400" },
-            { number: "Worldwide", label: "Remote Work", icon: "🌎", color: "text-purple-400" },
+            { number: "100%", label: "Satisfaction", icon: "⭐", color: "text-cyan-400" },
+            { number: "Global", label: "Remote Work", icon: "🌎", color: "text-purple-400" },
           ].map((stat) => (
             <motion.div
               key={stat.label}
-              whileHover={{ scale: 1.05, y: -2 }}
-              className="text-center p-6 bg-slate-900/70 rounded-2xl border border-slate-700/40 shadow-sm hover:shadow-cyan-500/10 transition-all duration-300"
+              whileHover={!isMobile ? { scale: 1.05, y: -2 } : {}}
+              className="text-center p-4 sm:p-6 bg-slate-900/70 rounded-xl sm:rounded-2xl border border-slate-700/40 shadow-sm hover:shadow-cyan-500/10 transition-all duration-300"
             >
-              <div className="text-2xl mb-2">{stat.icon}</div>
-              <div className={`text-2xl font-bold ${stat.color} mb-2`}>
+              <div className="text-xl sm:text-2xl mb-1 sm:mb-2">{stat.icon}</div>
+              <div className={`text-xl sm:text-2xl font-bold ${stat.color} mb-1 sm:mb-2`}>
                 {stat.number}
               </div>
-              <div className="text-gray-400 text-sm font-medium">{stat.label}</div>
+              <div className="text-gray-400 text-xs sm:text-sm font-medium">{stat.label}</div>
             </motion.div>
           ))}
         </motion.div>
@@ -367,10 +395,11 @@ const InputField = ({
   value,
   onChange,
   required,
+  isMobile,
 }: any) => (
-  <motion.div whileHover={{ scale: 1.02 }} className="relative">
-    <label htmlFor={id} className="block text-white font-medium mb-3">
-      {label} {required && "*"}
+  <motion.div whileHover={!isMobile ? { scale: 1.02 } : {}} className="relative">
+    <label htmlFor={id} className="block text-white font-medium mb-2 sm:mb-3 text-sm sm:text-base">
+      {label} {required && <span className="text-cyan-400">*</span>}
     </label>
     <div className="relative">
       <input
@@ -380,18 +409,18 @@ const InputField = ({
         onChange={onChange}
         required={required}
         type="text"
-        className="w-full px-4 py-4 bg-slate-800/50 border border-slate-600/50 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:border-cyan-400/50 focus:ring-2 focus:ring-cyan-400/20 transition-all duration-300"
+        className="w-full px-4 py-3 sm:py-4 bg-slate-800/50 border border-slate-600/50 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:border-cyan-400/50 focus:ring-2 focus:ring-cyan-400/20 transition-all duration-300 text-sm sm:text-base"
         placeholder={placeholder}
       />
-      <Icon className="absolute right-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+      <Icon className="absolute right-3 sm:right-4 top-1/2 transform -translate-y-1/2 w-4 h-4 sm:w-5 sm:h-5 text-gray-400" />
     </div>
   </motion.div>
 );
 
-const SelectField = ({ id, name, label, value, onChange, required }: any) => (
-  <motion.div whileHover={{ scale: 1.02 }}>
-    <label htmlFor={id} className="block text-white font-medium mb-3">
-      {label} {required && "*"}
+const SelectField = ({ id, name, label, value, onChange, required, isMobile }: any) => (
+  <motion.div whileHover={!isMobile ? { scale: 1.02 } : {}}>
+    <label htmlFor={id} className="block text-white font-medium mb-2 sm:mb-3 text-sm sm:text-base">
+      {label} {required && <span className="text-cyan-400">*</span>}
     </label>
     <select
       id={id}
@@ -399,7 +428,7 @@ const SelectField = ({ id, name, label, value, onChange, required }: any) => (
       value={value}
       onChange={onChange}
       required={required}
-      className="w-full px-4 py-4 bg-slate-800/50 border border-slate-600/50 rounded-xl text-white focus:outline-none focus:border-purple-400/50 focus:ring-2 focus:ring-purple-400/20 transition-all duration-300"
+      className="w-full px-4 py-3 sm:py-4 bg-slate-800/50 border border-slate-600/50 rounded-xl text-white focus:outline-none focus:border-purple-400/50 focus:ring-2 focus:ring-purple-400/20 transition-all duration-300 text-sm sm:text-base"
     >
       <option value="">Select project type</option>
       <option value="web-development">Web Development</option>
@@ -420,10 +449,11 @@ const TextAreaField = ({
   value,
   onChange,
   required,
+  isMobile,
 }: any) => (
-  <motion.div whileHover={{ scale: 1.02 }}>
-    <label htmlFor={id} className="block text-white font-medium mb-3">
-      {label} {required && "*"}
+  <motion.div whileHover={!isMobile ? { scale: 1.02 } : {}}>
+    <label htmlFor={id} className="block text-white font-medium mb-2 sm:mb-3 text-sm sm:text-base">
+      {label} {required && <span className="text-cyan-400">*</span>}
     </label>
     <textarea
       id={id}
@@ -431,8 +461,8 @@ const TextAreaField = ({
       value={value}
       onChange={onChange}
       required={required}
-      rows={6}
-      className="w-full px-4 py-4 bg-slate-800/50 border border-slate-600/50 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:border-purple-400/50 focus:ring-2 focus:ring-purple-400/20 transition-all duration-300 resize-none"
+      rows={isMobile ? 4 : 6}
+      className="w-full px-4 py-3 sm:py-4 bg-slate-800/50 border border-slate-600/50 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:border-purple-400/50 focus:ring-2 focus:ring-purple-400/20 transition-all duration-300 resize-none text-sm sm:text-base"
       placeholder={placeholder}
     />
   </motion.div>

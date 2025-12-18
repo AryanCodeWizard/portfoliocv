@@ -235,31 +235,31 @@ export const OTHER_SKILL = [
   },
   {
     skill_name: "Docker",
-    image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSwmHa6HZ1o8_IpJ8do2pt6W_JRXY3xYmwg9g&s",
+    image: "docker.png", // Change from URL to local file
     width: 60,
     height: 60,
   },
   {
     skill_name: "Kubernetes",
-    image: "https://a.storyblok.com/f/189401/1080x608/daa7ee5484/what_is_k8s.png",
+    image: "kubernetes.png", // Change from URL to local file
     width: 60,
     height: 60,
   },
   {
     skill_name: "Postman",
-    image: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/postman/postman-original.svg",
+    image: "postman.png", // Change from URL to local file
     width: 60,
     height: 60,
   },
   {
     skill_name: "Git",
-    image: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/git/git-original.svg",
+    image: "git.png", // Change from URL to local file
     width: 60,
     height: 60,
   },
   {
     skill_name: "Linux",
-    image: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/linux/linux-original.svg",
+    image: "linux.png", // Change from URL to local file
     width: 60,
     height: 60,
   },
@@ -392,7 +392,7 @@ export const PROJECTS = [
     title: "E-Commerce Platform",
     description:
       'A full-featured e-commerce platform with real-time inventory management, payment processing, and customer analytics. Built with scalability and performance in mind.',
-    image: "/projects/project-4.png",
+    image: "/projects/Edvora.png", // Use existing image as placeholder
     link: "https://example.com",
     status: "delivered",
     technologies: ["Next.js", "Stripe", "MongoDB", "Node.js"],
@@ -404,7 +404,7 @@ export const PROJECTS = [
     title: "Mobile Fitness App",
     description:
       'A cross-platform mobile application for fitness tracking, workout plans, and nutrition guidance with social features and progress analytics.',
-    image: "/projects/project-5.png",
+    image: "/projects/WillWings.png", // Use existing image as placeholder
     link: "https://example.com",
     status: "maintenance",
     technologies: ["React Native", "Firebase", "Redux", "TypeScript"],
@@ -416,7 +416,7 @@ export const PROJECTS = [
     title: "AI Content Generator",
     description:
       'An AI-powered content generation tool that helps creators write engaging copy, generate ideas, and optimize content for SEO using machine learning algorithms.',
-    image: "/projects/project-6.png",
+    image: "/projects/Portfolio.png", // Use existing image as placeholder
     link: "https://example.com",
     status: "delivered",
     technologies: ["Python", "TensorFlow", "FastAPI", "React"],
@@ -428,7 +428,7 @@ export const PROJECTS = [
     title: "DevOps Automation Suite",
     description:
       'A comprehensive DevOps toolset for CI/CD pipeline automation, container orchestration, and infrastructure monitoring with real-time alerts.',
-    image: "/projects/project-7.png",
+    image: "/projects/Edvora.png", // Use existing image as placeholder
     link: "https://example.com",
     status: "delivered",
     technologies: ["Docker", "Kubernetes", "AWS", "Terraform"],
@@ -440,7 +440,7 @@ export const PROJECTS = [
     title: "Social Media Dashboard",
     description:
       'A real-time social media analytics dashboard that aggregates data from multiple platforms and provides insights through interactive visualizations.',
-    image: "/projects/project-8.png",
+    image: "/projects/WillWings.png", // Use existing image as placeholder
     link: "https://example.com",
     status: "maintenance",
     technologies: ["Vue.js", "D3.js", "Express.js", "PostgreSQL"],
@@ -452,7 +452,7 @@ export const PROJECTS = [
     title: "Blockchain Wallet",
     description:
       'A secure cryptocurrency wallet with multi-chain support, NFT management, and decentralized exchange integration for seamless crypto transactions.',
-    image: "/projects/project-9.png",
+    image: "/projects/Portfolio.png", // Use existing image as placeholder
     link: "https://example.com",
     status: "progress",
     technologies: ["Web3.js", "Solidity", "React", "Node.js"],
@@ -464,7 +464,7 @@ export const PROJECTS = [
     title: "Healthcare Management System",
     description:
       'An enterprise healthcare platform for patient records management, appointment scheduling, and telemedicine features with HIPAA compliance.',
-    image: "/projects/project-10.png",
+    image: "/projects/Edvora.png", // Use existing image as placeholder
     link: "https://example.com",
     status: "delivered",
     technologies: ["Angular", "Java", "Spring Boot", "MySQL"],

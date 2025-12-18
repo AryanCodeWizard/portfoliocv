@@ -1,11 +1,10 @@
-
-
 "use client";
+
+import { useEffect, useState } from "react";
 
 import Image from "next/image";
 import { motion } from "framer-motion";
 import { useInView } from "react-intersection-observer";
-import { useState } from "react";
 
 type SkillDataProviderProps = {
   src: string;
@@ -24,159 +23,48 @@ export const SkillDataProvider = ({
 }: SkillDataProviderProps) => {
   const { ref, inView } = useInView({
     triggerOnce: true,
-    threshold: 0.2,
+    threshold: 0.1,
   });
 
-  const [isHovered, setIsHovered] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
 
-  const cardVariants = {
-    hidden: { 
-      opacity: 0, 
-      y: 50,
-      scale: 0.8,
-      rotateY: 180 
-    },
-    visible: { 
-      opacity: 1, 
-      y: 0,
-      scale: 1,
-      rotateY: 0,
-      transition: {
-        type: "spring",
-        stiffness: 100,
-        damping: 15,
-        delay: index * 0.05,
-        duration: 0.8
-      }
-    },
-  };
-
-  const hoverVariants = {
-    hover: {
-      y: -10,
-      scale: 1.1,
-      rotateZ: [0, -5, 5, 0],
-      transition: {
-        type: "spring",
-        stiffness: 400,
-        damping: 10,
-        rotateZ: {
-          duration: 0.5,
-          ease: "easeInOut"
-        }
-      }
-    }
-  };
-
-  const glowVariants = {
-    hover: {
-      boxShadow: [
-        "0 0 20px rgba(6, 182, 212, 0.3)",
-        "0 0 40px rgba(6, 182, 212, 0.5)",
-        "0 0 20px rgba(6, 182, 212, 0.3)"
-      ],
-      transition: {
-        boxShadow: {
-          duration: 1.5,
-          repeat: Infinity,
-          ease: "easeInOut"
-        }
-      }
-    }
-  };
+  useEffect(() => {
+    setIsMobile(window.innerWidth < 768);
+  }, []);
 
   return (
     <motion.div
       ref={ref}
-      variants={cardVariants}
-      initial="hidden"
-      animate={inView ? "visible" : "hidden"}
-      whileHover="hover"
-      onHoverStart={() => setIsHovered(true)}
-      onHoverEnd={() => setIsHovered(false)}
-      className="relative group"
+      initial={{ opacity: 0, y: isMobile ? 10 : 20, scale: 0.95 }}
+      animate={inView ? { opacity: 1, y: 0, scale: 1 } : {}}
+      transition={{
+        duration: isMobile ? 0.2 : 0.3,
+        delay: index * (isMobile ? 0.02 : 0.03),
+        ease: "easeOut"
+      }}
+      whileHover={!isMobile ? { scale: 1.05, y: -5 } : {}}
+      whileTap={isMobile ? { scale: 0.95 } : {}}
+      className="relative"
     >
       {/* Main Skill Card */}
-      <motion.div
-        variants={glowVariants}
-        className="relative bg-slate-800/50 backdrop-blur-xl rounded-2xl p-6 border border-slate-700/50 hover:border-cyan-400/50 transition-all duration-300 cursor-pointer shadow-lg hover:shadow-xl"
-      >
+      <div className="relative bg-slate-800/60 backdrop-blur-xl rounded-2xl p-5 sm:p-6 md:p-6 border border-slate-700/50 hover:border-cyan-400/50 transition-colors duration-200 cursor-pointer shadow-lg hover:shadow-cyan-500/10">
         {/* Skill Icon */}
-        <motion.div
-          variants={hoverVariants}
-          className="flex items-center justify-center mb-3"
-        >
+        <div className="flex items-center justify-center mb-3 md:mb-3">
           <Image 
             src={`/skills/${src}`} 
-            width={width} 
-            height={height} 
+            width={isMobile ? width * 0.8 : width} 
+            height={isMobile ? height * 0.8 : height} 
             alt={name}
-            className="filter drop-shadow-lg transition-all duration-300 group-hover:drop-shadow-2xl"
+            className="filter drop-shadow-lg"
+            loading="lazy"
           />
-        </motion.div>
+        </div>
 
         {/* Skill Name */}
-        <motion.p
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: index * 0.05 + 0.3 }}
-          className="text-white font-semibold text-center text-sm mt-2"
-        >
+        <p className="text-white font-semibold text-center text-sm md:text-sm mt-2">
           {name}
-        </motion.p>
-
-        {/* Hover Tooltip */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.8, y: 10 }}
-          animate={isHovered ? { opacity: 1, scale: 1, y: 0 } : {}}
-          className="absolute -top-10 left-1/2 transform -translate-x-1/2 bg-slate-900/90 backdrop-blur-lg text-cyan-300 text-xs font-medium px-3 py-1.5 rounded-lg border border-cyan-500/30 whitespace-nowrap pointer-events-none"
-        >
-          {name}
-          <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-1 w-2 h-2 bg-slate-900/90 rotate-45 border-r border-b border-cyan-500/30"></div>
-        </motion.div>
-
-        {/* Animated Rings */}
-        <motion.div
-          animate={{
-            scale: [1, 1.2, 1],
-            opacity: [0.5, 0.8, 0.5],
-          }}
-          transition={{
-            duration: 2,
-            repeat: Infinity,
-            ease: "easeInOut",
-
-          }}
-          className="absolute inset-0 rounded-2xl border-2 border-cyan-400/20 pointer-events-none"
-        />
-      </motion.div>
-
-      {/* Floating Particles on Hover */}
-      {isHovered && (
-        <>
-          {[...Array(3)].map((_, i) => (
-            <motion.div
-              key={i}
-              initial={{ scale: 0, opacity: 0 }}
-              animate={{ 
-                scale: [0, 1, 0],
-                opacity: [0, 1, 0],
-                y: [0, -30, -60],
-                x: Math.random() * 40 - 20
-              }}
-              transition={{ 
-                duration: 1.5,
-                delay: i * 0.2,
-              }}
-              className="absolute w-1 h-1 bg-cyan-400 rounded-full blur-sm pointer-events-none"
-              style={{
-                left: '50%',
-                top: '50%',
-              }}
-            />
-          ))}
-        </>
-      )}
+        </p>
+      </div>
     </motion.div>
   );
 };
