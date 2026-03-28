@@ -1,10 +1,33 @@
 "use client";
 
-import { ArrowDownTrayIcon, DocumentTextIcon, SparklesIcon } from "@heroicons/react/24/outline";
+import { ArrowDownTrayIcon, ArrowTopRightOnSquareIcon, DocumentTextIcon, SparklesIcon } from "@heroicons/react/24/outline";
 
 import { motion } from "framer-motion";
 
 export const Resume = () => {
+  const certifications = [
+    {
+      title: "Master Generative AI & Generative AI tools",
+      issuer: "Infosys",
+      href: "https://drive.google.com/file/d/1orV7UXeQuuiVkZiZBZf5F2vOIZfPWr0W/view",
+    },
+    {
+      title: "Computer Communications",
+      issuer: "Coursera",
+      href: "https://drive.google.com/file/d/12cp7Hj07miwnMMuvAloVCb7a5ZNuoWD_/view",
+    },
+    {
+      title: "TCP/IP and Advance Topics",
+      issuer: "Infosys",
+      href: "https://drive.google.com/file/d/1xSQn9LW2F7vSkwWxD-PFBqzHOZMoJRRf/view",
+    },
+    {
+      title: "The bits and Bytes of Computer Networking",
+      issuer: "Google",
+      href: "https://drive.google.com/file/d/1fLspDx_NP4FpFcsHqfziYWICYjaAHydz/view",
+    },
+  ];
+
   return (
     <section
       id="resume"
@@ -43,11 +66,29 @@ export const Resume = () => {
           transition={{ duration: 0.6 }}
           className="rounded-2xl border border-white/10 bg-slate-900/60 backdrop-blur-md p-3 md:p-4"
         >
-          <iframe
-            src="/resume.pdf#view=FitH"
-            title="Aryan resume preview"
+          <object
+            data="/resume.pdf#view=FitH"
+            type="application/pdf"
+            aria-label="Aryan resume preview"
             className="w-full h-[70vh] rounded-xl bg-slate-950"
-          />
+          >
+            <div className="h-full w-full rounded-xl border border-dashed border-cyan-400/40 bg-slate-950/70 p-6 text-center flex items-center justify-center">
+              <div>
+                <p className="text-base md:text-lg text-white font-semibold">Resume preview is unavailable.</p>
+                <p className="mt-2 text-sm text-gray-300">
+                  Add your file at <span className="font-semibold text-cyan-300">public/resume.pdf</span> and refresh this page.
+                </p>
+                <a
+                  href="/resume.pdf"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="mt-4 inline-flex items-center gap-2 rounded-xl border border-white/20 bg-white/5 px-4 py-2 text-white font-semibold hover:border-cyan-400/50 transition-colors"
+                >
+                  Try opening resume.pdf
+                </a>
+              </div>
+            </div>
+          </object>
           <p className="text-xs text-gray-400 mt-3 px-2">
             If preview does not load on your browser, use the View or Download buttons below.
           </p>
@@ -85,6 +126,73 @@ export const Resume = () => {
               </a>
             </div>
           </div>
+        </div>
+
+        <div className="mt-8 overflow-hidden rounded-3xl border border-cyan-400/30 bg-gradient-to-br from-slate-900/90 via-slate-900/80 to-cyan-950/40 p-6 md:p-8 backdrop-blur-md">
+          <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
+            <div>
+              <h3 className="text-2xl md:text-3xl font-semibold text-white">Certifications</h3>
+              <p className="mt-2 text-gray-300">Credential showcase with direct verification links.</p>
+            </div>
+            <span className="inline-flex w-fit items-center rounded-full border border-cyan-300/40 bg-cyan-400/10 px-4 py-1 text-xs font-semibold uppercase tracking-[0.16em] text-cyan-200">
+              {certifications.length}+ Achievements
+            </span>
+          </div>
+
+          <motion.ul
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.2 }}
+            variants={{
+              hidden: {},
+              visible: {
+                transition: { staggerChildren: 0.08 },
+              },
+            }}
+            className="mt-6 grid grid-cols-1 gap-4 md:grid-cols-2"
+          >
+            {certifications.map((certificate, index) => (
+              <motion.li
+                key={certificate.href}
+                variants={{
+                  hidden: { opacity: 0, y: 16 },
+                  visible: { opacity: 1, y: 0 },
+                }}
+              >
+                <a
+                  href={certificate.href}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="group relative block h-full overflow-hidden rounded-2xl border border-white/15 bg-slate-950/55 p-5 transition-all duration-300 hover:-translate-y-1 hover:border-cyan-300/60 hover:shadow-[0_14px_40px_-18px_rgba(34,211,238,0.65)]"
+                >
+                  <div className="pointer-events-none absolute -right-8 -top-8 h-24 w-24 rounded-full bg-cyan-400/10 blur-2xl" />
+                  <div className="relative flex h-full flex-col">
+                    <div className="flex items-start justify-between gap-3">
+                      <span className="inline-flex h-8 min-w-8 items-center justify-center rounded-lg border border-cyan-300/40 bg-cyan-500/10 px-2 text-xs font-bold text-cyan-200">
+                        {String(index + 1).padStart(2, "0")}
+                      </span>
+                      <span className="rounded-full border border-white/20 bg-white/5 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-200">
+                        {certificate.issuer}
+                      </span>
+                    </div>
+
+                    <p className="mt-4 text-base font-semibold leading-snug text-white md:text-lg">
+                      {certificate.title}
+                    </p>
+
+                    <div className="mt-5 inline-flex items-center gap-2 text-sm font-medium text-cyan-200 transition-colors group-hover:text-cyan-100">
+                      View certificate
+                      <ArrowTopRightOnSquareIcon className="h-4 w-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                    </div>
+                  </div>
+                </a>
+              </motion.li>
+            ))}
+          </motion.ul>
+
+          <p className="mt-6 text-sm text-gray-300">
+            More certifications will be added continuously as I complete new programs.
+          </p>
         </div>
       </motion.div>
     </section>
